@@ -31,7 +31,7 @@ jobs:
 
   push-to-DockerHub:
     runs-on: ubuntu-latest
-    needs: test-the-code
+    needs: test-the-codes
     steps:
       - name: fetch code from repository
         uses: actions/checkout@v4
