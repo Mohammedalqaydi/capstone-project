@@ -48,4 +48,4 @@ jobs:
           push: true
           tags: 
             mohammedmustaf/python:latest
-            mohammedmustaf/python:${{github.sha}}
+            mohammedmustaf/python:${{github.sha:7}}
