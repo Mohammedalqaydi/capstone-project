@@ -46,6 +46,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: 
+          tags: |
             mohammedmustaf/python:latest
             mohammedmustaf/python:${{github.sha}}
