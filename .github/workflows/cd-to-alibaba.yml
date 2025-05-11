@@ -1,35 +1,34 @@
+name: Deploy
 
-    on: [push]
-      
+on:
+  workflow_run:
+    workflows: ["Test-and-push-to-DockerHub"]
+    types:
+      - completed
 
-    jobs:
-      deoly-to-alibaba:
-         runs-on: self-hosted
-         strategy:
-               matrix:
-                 node: ["10.0.2.224", "10.0.2.226"]  
+jobs:
+  deploy-to-alibaba:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        node: ["10.0.2.224", "10.0.2.226"]
 
+    steps:
+      - name: Deploy to servers
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SERVER_HOST: ${{ matrix.node }}
+        run: |
+          ssh-keyscan ${{ matrix.node }} >> ~/.ssh/known_hosts
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/github_actions
+          chmod 400 ~/.ssh/github_actions
+          ssh -i ~/.ssh/github_actions $SSH_USERNAME@${{ matrix.node }} "
+            docker stop flask-app &&
+            docker rm flask-app &&
+            docker pull mohammedmustaf/python:latest &&
+            docker run -d -p 80:5000 --name flask-app --env-file .env mohammedmustaf/python:latest
+          "
 
-         steps:
-          -
-    
-             name: deply to servers in alibabacloud
-             env:
-                SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-                SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
-                SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-                SERVER_HOST: ${{ matrix.node }}   
-              
-             run: |
-           
-              ssh-keyscan ${{ matrix.node }} >> ~/.ssh/known_hosts &&
-              echo "$SSH_PRIVATE_KEY" > ~/.ssh/github_actions &&
-              chmod 400 ~/.ssh/github_actions &&
-              ssh -i ~/.ssh/github_actions $SSH_USERNAME@${{ matrix.node }} "
-              cd / && docker stop flask-app && docker rm flask-app && docker pull mohammedmustaf/python:latest && docker run -d -p 80:5000 --name flask-app --env-file .env mohammedmustaf/python:latest
-               "
-             
-               
-             
-                
                 
