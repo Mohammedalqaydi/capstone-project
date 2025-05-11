@@ -1,7 +1,7 @@
 
     on:
       workflow_run:
-        workflows: [CiWorkflow::]
+        workflows: ["CiWorkflow"]
         types:
           - completed
 
