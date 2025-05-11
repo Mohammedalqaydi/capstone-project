@@ -1,9 +1,6 @@
 
-    on:
-      workflow_run:
-        workflows: ["CiWorkflow"]
-        types:
-          - completed
+    on: [push]
+      
 
     jobs:
       deoly-to-alibaba:
